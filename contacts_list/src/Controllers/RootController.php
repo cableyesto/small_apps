@@ -19,8 +19,7 @@ class RootController extends BaseController
     {
         $num_contacts = $this->connection->query('SELECT COUNT(*) FROM contacts')->fetchColumn();
 
-        $response->getBody()->write("hatsss " . $num_contacts);
-        //$response->getBody()->write("hatsss");
-        return $response;
+        $arrayTemplate = ['contacts' => $num_contacts];
+        return $this->render($request, $response, 'home/index.html.twig', $arrayTemplate);
     }
 }

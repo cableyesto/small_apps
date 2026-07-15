@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
+use Slim\Views\Twig;
+use Slim\Views\TwigMiddleware;
+
 use App\Controllers\RootController;
+use App\Controllers\DashboardController;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -29,7 +33,14 @@ $app = AppFactory::create();
 // Add Error Handling Middleware
 $app->addErrorMiddleware(true, false, false);
 
+// Create Twig
+$twig = Twig::create(__DIR__ . '/../templates', ['cache' => false]);
+
+// Add Twig-View Middleware
+$app->add(TwigMiddleware::create($app, $twig));
+
 $app->get('/', RootController::class . ":renderForm");
+$app->get('/dashboard', DashboardController::class . ":renderView");
 
 $app->run();
 
