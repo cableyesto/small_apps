@@ -4,7 +4,13 @@
 Ne pas utiliser en production. Uniquement dans un environnement de développement.<br />
 <b>Warning</b>
 
-## Dépendances
+## Pile technologique du projet
+- Framework: Slim PHP
+- DB: PHP PDO
+- Templating: Twig
+- Style: PicoCSS
+
+## Dépendances dev
 1) Windows
  - Utilisation de WSL 2, Ubuntu
  - Docker Desktop
