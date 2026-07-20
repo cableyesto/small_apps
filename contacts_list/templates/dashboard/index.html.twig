@@ -4,5 +4,27 @@
     <main class="container">
         <h1>Tableau de bord</h1>
         <a href="dashboard/create" role="button">Ajouter un contact</a>
+        <div class="overflow-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Mail</th>
+                        <th scope="col">Téléphone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in contacts %}
+                        <tr>
+                            <th scope="row">{{ contact.nom }}</th>
+                            <td>{{ contact.prenom }}</td>
+                            <td>{{ contact.mail }}</td>
+                            <td>{{ contact.telephone }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </main>
 {% endblock %}

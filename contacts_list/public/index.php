@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
+use Slim\Routing\RouteCollectorProxy;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 
@@ -40,7 +41,12 @@ $twig = Twig::create(__DIR__ . '/../templates', ['cache' => false]);
 $app->add(TwigMiddleware::create($app, $twig));
 
 $app->get('/', RootController::class . ":renderForm");
-$app->get('/dashboard', DashboardController::class . ":renderView");
+$app->group('/dashboard', function (RouteCollectorProxy $group) {
+    $group->get('', DashboardController::class . ":renderView");
+    $group->get('/create', DashboardController::class . ":renderCreate");
+    $group->post('/create', DashboardController::class . ":processCreate");
+});
+$app->get('/redirect', DashboardController::class . ":processRedirect");
 
 $app->run();
 
