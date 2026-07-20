@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
+use Slim\Middleware\MethodOverrideMiddleware;
 use Slim\Routing\RouteCollectorProxy;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
@@ -40,13 +41,21 @@ $twig = Twig::create(__DIR__ . '/../templates', ['cache' => false]);
 // Add Twig-View Middleware
 $app->add(TwigMiddleware::create($app, $twig));
 
+// Add RoutingMiddleware before we add the MethodOverrideMiddleware so the method is overridden before routing is done
+$app->addRoutingMiddleware();
+
+// Add MethodOverride middleware
+$methodOverrideMiddleware = new MethodOverrideMiddleware();
+$app->add($methodOverrideMiddleware);
+
 $app->get('/', RootController::class . ":renderForm");
 $app->group('/dashboard', function (RouteCollectorProxy $group) {
     $group->get('', DashboardController::class . ":renderView");
     $group->get('/create', DashboardController::class . ":renderCreate");
     $group->post('/create', DashboardController::class . ":processCreate");
+    $group->get('/{id:[0-9]+}/update', DashboardController::class . ":renderUpdate");
+    $group->put('/{id:[0-9]+}/update', DashboardController::class . ":processUpdate");
 });
-$app->get('/redirect', DashboardController::class . ":processRedirect");
 
 $app->run();
 
