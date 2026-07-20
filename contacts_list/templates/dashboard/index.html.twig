@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <body>
     <main class="container">
         <h1>Tableau de bord</h1>
         <a href="dashboard/create" role="button">Ajouter un contact</a>
@@ -13,6 +14,7 @@
                         <th scope="col">Mail</th>
                         <th scope="col">Téléphone</th>
                         <th scope="col">Modification</th>
+                        <th scope="col">Suppression</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,10 +25,66 @@
                             <td>{{ contact.mail }}</td>
                             <td>{{ contact.telephone }}</td>
                             <td><a href="dashboard/{{ contact.id }}/update">Modifier</a></td>
+                            <td><button id="delete-button-{{ contact.id }}" class="contrast" data-micromodal-trigger="modal-1">Supprimer</button></td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </main>
+    </body>
+
+    <div class="modal a micromodal-slide" id="modal-1" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+            <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+                <button class="modal__close" aria-label="Close modal" data-micromodal-close>X</button>
+                <h1 id="modal-1-title">Supprimer le contact</h1>
+                <h4>Souhaitez-vous définitivement supprimer le contact ?</h4>
+                <button class="send-delete">OUI</button>
+                <button class="contrast" aria-label="Close modal" data-micromodal-close>NON</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="https://unpkg.com/micromodal@0.6.1/dist/micromodal.js"></script>
+    <script type="application/javascript">
+        function deleteSpecificContact(id) {
+            fetch(`/dashboard/${id}/delete`, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({
+                    answer: 'YES'
+                })
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            }).then((data) => {
+                if (data.contact === "deleted") {
+                    window.location.href = "https://contacts-list.ddev.site/dashboard";
+                }
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+
+        let elements = document.getElementsByClassName("send-delete")
+
+        document.addEventListener('DOMContentLoaded', () => {
+            MicroModal.init({
+                onShow: (modal, triggerEl) => {
+                    let idToDelete = triggerEl.id.split('-')[2];
+                    elements[0].addEventListener('click', () => deleteSpecificContact(idToDelete), false);
+                }
+            })
+
+            MicroModal.show('modal-1')
+            MicroModal.close('modal-1')
+        });
+    </script>
 {% endblock %}

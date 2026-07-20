@@ -55,7 +55,7 @@ $app->group('/dashboard', function (RouteCollectorProxy $group) {
     $group->post('/create', DashboardController::class . ":processCreate");
     $group->get('/{id:[0-9]+}/update', DashboardController::class . ":renderUpdate");
     $group->put('/{id:[0-9]+}/update', DashboardController::class . ":processUpdate");
+    $group->delete('/{id:[0-9]+}/delete', DashboardController::class . ":deleteAsync");
 });
 
 $app->run();
-

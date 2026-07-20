@@ -111,6 +111,22 @@ class DashboardController extends BaseController
         }
     }
 
+    public function deleteAsync(Request $request, Response $response, array $args): Response
+    {
+        if ($request->getHeader('X-Requested-With')[0] !== 'XMLHttpRequest') {
+            $response->getBody()->write(json_encode(["error" => "error"]));
+            return $response;
+        }
+
+        $sql = "DELETE FROM contacts WHERE id = :id;";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":id", $args["id"], PDO::PARAM_INT);
+        $stmt->execute();
+
+        $response->getBody()->write(json_encode(["contact" => "deleted"]));
+        return $response;
+    }
+
     private function sanitizeInput($data): string
     {
         $data = trim($data);
